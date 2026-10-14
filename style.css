@@ -86,15 +86,35 @@ body {
 }
 
 .brand-logo {
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
-  color: #ffffff;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  max-width: 48px;
+  max-height: 48px;
+  flex: 0 0 48px;
+  background-color: #06070a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.site-header .brand-logo img,
+.brand-logo img,
+img.brand-logo-img {
+  display: block !important;
+  width: 48px !important;
+  height: 48px !important;
+  max-width: 48px !important;
+  max-height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
 }
 
 .brand-title {
@@ -1261,6 +1281,20 @@ button {
   }
 }
 
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .brand-title {
+    font-size: 1.125rem;
+  }
+  .brand-subtitle {
+    font-size: 0.75rem;
+  }
+}
+
 @media (max-width: 640px) {
   .meta-pairs-grid {
     grid-template-columns: 1fr;
@@ -1276,3 +1310,39 @@ button {
     justify-content: flex-end;
   }
 }
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0.5rem 0.75rem;
+  }
+  .brand {
+    gap: 0.625rem;
+  }
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    max-width: 42px;
+    max-height: 42px;
+    flex: 0 0 42px;
+  }
+  .site-header .brand-logo img,
+  .brand-logo img,
+  img.brand-logo-img {
+    width: 42px !important;
+    height: 42px !important;
+    max-width: 42px !important;
+    max-height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+  }
+  .brand-title {
+    font-size: 0.9375rem;
+  }
+  .header-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
