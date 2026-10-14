@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANTARES LEGAL AI — Kho Vụ Việc Pháp Lý Thực Tiễn Hỗ Trợ Giảng Dạy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">ANTARES LEGAL AI</h1>
+          <p class="brand-subtitle">Kho vụ việc pháp lý thực tiễn hỗ trợ giảng dạy</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="badge badge-pilot">Phiên bản thử nghiệm (Public Pilot) • 64 vụ việc</span>
+        <button id="btnFeedbackHistory" class="btn-secondary btn-sm" title="Xem các ghi chú góp ý đã lưu trên trình duyệt">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Sổ tay góp ý (<span id="feedbackCount">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN HERO & SEARCH -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h2 class="hero-heading">Tìm vụ việc thực tế cho bài giảng</h2>
+      <p class="hero-desc">
+        Tìm kiếm các vụ việc có yếu tố pháp lý từ nguồn báo chí và nguồn chính thống. Giảng viên chủ động lựa chọn, kiểm chứng và sử dụng phù hợp với nội dung giảng dạy.
+      </p>
+
+      <!-- SEARCH BAR -->
+      <div class="search-box-wrapper">
+        <div class="search-input-group">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Tìm kiếm vụ việc, hành vi, chủ đề pháp luật, địa phương..." 
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="btnClearSearch" class="btn-clear" title="Xóa tìm kiếm" style="display: none;">&times;</button>
+          <button id="btnSearch" class="btn-primary search-action-btn">Tìm kiếm</button>
+        </div>
+
+        <!-- QUICK SUGGESTIONS -->
+        <div class="quick-tags">
+          <span class="quick-tags-label">Gợi ý từ khóa:</span>
+          <button class="tag-btn" data-query="lừa đảo">lừa đảo</button>
+          <button class="tag-btn" data-query="người chưa thành niên">người chưa thành niên</button>
+          <button class="tag-btn" data-query="cướp tài sản">cướp tài sản</button>
+          <button class="tag-btn" data-query="Hà Nội">Hà Nội</button>
+          <button class="tag-btn" data-query="khởi tố">khởi tố</button>
+          <button class="tag-btn" data-query="tranh chấp đất đai">tranh chấp đất đai</button>
+          <button class="tag-btn" data-query="tai nạn giao thông">tai nạn giao thông</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP WORKSPACE (FILTERS + RESULTS) -->
+  <main class="app-workspace">
+    <div class="workspace-grid">
+      <!-- SIDEBAR FILTERS -->
+      <aside class="filters-sidebar">
+        <div class="filters-header">
+          <h3 class="filters-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            Lọc kết quả
+          </h3>
+          <button id="btnResetFilters" class="btn-link" title="Khôi phục toàn bộ 64 vụ việc">Đặt lại</button>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterDomain" class="filter-label">Lĩnh vực pháp luật</label>
+          <select id="filterDomain" class="filter-select">
+            <option value="">-- Tất cả lĩnh vực --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterProvince" class="filter-label">Tỉnh / Thành phố hiện hành (2026)</label>
+          <select id="filterProvince" class="filter-select">
+            <option value="">-- Tất cả địa phương --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterStage" class="filter-label">Giai đoạn / Tình trạng tố tụng</label>
+          <select id="filterStage" class="filter-select">
+            <option value="">-- Tất cả giai đoạn --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterPublisher" class="filter-label">Nguồn báo chí</label>
+          <select id="filterPublisher" class="filter-select">
+            <option value="">-- Tất cả nguồn báo --</option>
+          </select>
+        </div>
+      </aside>
+
+      <!-- RESULTS SECTION -->
+      <section class="results-section">
+        <!-- TOOLBAR: COUNTER & SORT -->
+        <div class="results-toolbar">
+          <div class="results-count-wrapper">
+            <span class="results-counter" id="resultsCount">Đang tải...</span>
+            <span id="activeFilterTags" class="active-filter-chips"></span>
+          </div>
+          <div class="results-actions">
+            <label for="sortOrder" class="sort-label">Sắp xếp:</label>
+            <select id="sortOrder" class="sort-select">
+              <option value="newest" selected>Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+              <option value="id_asc">Mã vụ việc</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- RESULTS GRID / LIST -->
+        <div id="resultsGrid" class="results-grid">
+          <!-- Cards rendered dynamically by JS -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+            <path d="M8 11h6"/>
+          </svg>
+          <h3>Không tìm thấy vụ việc phù hợp</h3>
+          <p>Hãy thử giảm từ khóa tìm kiếm hoặc bấm nút "Đặt lại" để xem lại toàn bộ 64 vụ việc trong bộ dữ liệu.</p>
+          <button id="btnEmptyReset" class="btn-primary">Đặt lại bộ lọc & tìm kiếm</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- CASE DETAIL MODAL -->
+  <div id="caseDetailModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modalCaseTitle">
+      <div class="modal-header">
+        <div class="modal-header-meta">
+          <span id="modalCaseId" class="badge badge-case-id">PILOT_2026_XXX</span>
+          <span id="modalDomain" class="badge badge-domain">Lĩnh vực</span>
+          <span id="modalProvince" class="badge badge-province">Địa phương</span>
+        </div>
+        <button id="btnModalClose" class="modal-close-btn" aria-label="Đóng cửa sổ">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <h2 id="modalCaseTitle" class="modal-title">Tiêu đề vụ việc</h2>
+
+        <!-- SOURCE ANOMALY WARNING CALLOUT -->
+        <div id="modalAnomalyAlert" class="anomaly-alert-box" style="display: none;">
+          <div class="alert-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="alert-content">
+            <h4>Lưu ý bất thường văn bản nguồn (Source Text Anomaly)</h4>
+            <p>
+              Văn bản báo chí gốc có cách diễn đạt danh xưng chưa chuẩn xác (ví dụ: ghi địa danh cấp tỉnh nhưng dùng tiền tố TP, hoặc cơ quan thụ lý ghi nhận theo địa bàn vụ án). 
+              Hệ thống Antares bảo toàn 100% trích dẫn nguyên văn từ nguồn để phục vụ đối soát, đồng thời giữ nguyên thẩm quyền chuẩn hóa theo quy định pháp luật.
+            </p>
+            <div class="anomaly-quote-box">
+              <span class="quote-label">Trích nguyên văn từ nguồn báo gốc:</span>
+              <p id="modalAnomalyQuote" class="quote-text"></p>
+            </div>
+            <div class="anomaly-norm-box">
+              <span class="norm-label">Cơ quan thụ lý chuẩn hóa theo Antares:</span>
+              <span id="modalAnomalyNormalized" class="norm-text"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION A: TÓM TẮT VỤ VIỆC -->
+        <div class="detail-section">
+          <div class="section-title-wrap">
+            <span class="section-number">A</span>
+            <h3 class="section-title">TÓM TẮT VỤ VIỆC</h3>
+          </div>
+          <div class="summary-card">
+            <p id="modalSummaryShort" class="summary-short-text"></p>
+            <div class="meta-pairs-grid">
+              <div class="meta-pair">
+                <span class="meta-label">Thời điểm vụ việc:</span>
+                <span id="modalIncidentDate" class="meta-val"></span>
+              </div>
+              <div class="meta-pair">
+                <span class="meta-label">Thời điểm đưa tin:</span>
+                <span id="modalPublishedDate" class="meta-val"></span>
+              </div>
+              <div class="meta-pair">
+                <span class="meta-label">Địa bàn hành chính 2026:</span>
+                <span id="modalLocationDetail" class="meta-val"></span>
+              </div>
+              <div class="meta-pair">
+                <span class="meta-label">Địa danh lịch sử (cũ):</span>
+                <span id="modalHistoricalLoc" class="meta-val"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION B: DIỄN BIẾN / SỰ KIỆN CHÍNH -->
+        <div class="detail-section">
+          <div class="section-title-wrap">
+            <span class="section-number">B</span>
+            <h3 class="section-title">DIỄN BIẾN / SỰ KIỆN CHÍNH</h3>
+          </div>
+          <div class="facts-card">
+            <div class="fact-block">
+              <h4 class="fact-block-heading">Diễn biến thực tế</h4>
+              <p id="modalSummaryDetailed" class="fact-text"></p>
+            </div>
+            <div class="fact-block">
+              <h4 class="fact-block-heading">Hành vi vi phạm / Tranh chấp pháp lý</h4>
+              <p id="modalInfraction" class="fact-text"></p>
+            </div>
+            <div class="fact-block">
+              <h4 class="fact-block-heading">Hậu quả thực tế / Thiệt hại</h4>
+              <p id="modalConsequence" class="fact-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION C: THÔNG TIN PHÁP LÝ ĐỂ TRA CỨU -->
+        <div class="detail-section">
+          <div class="section-title-wrap">
+            <span class="section-number">C</span>
+            <h3 class="section-title">THÔNG TIN PHÁP LÝ ĐỂ TRA CỨU</h3>
+          </div>
+          <p class="section-disclaimer">
+            * Các trường dữ liệu dưới đây phục vụ định hướng tra cứu tình huống thực tế, không cấu thành ý kiến hay kết luận tư vấn pháp lý chính thức.
+          </p>
+          <div class="legal-card">
+            <div class="meta-pairs-grid">
+              <div class="meta-pair">
+                <span class="meta-label">Lĩnh vực pháp luật:</span>
+                <span id="modalLegalDomain" class="meta-val"></span>
+              </div>
+              <div class="meta-pair">
+                <span class="meta-label">Chủ đề pháp lý:</span>
+                <span id="modalLegalTopic" class="meta-val"></span>
+              </div>
+              <div class="meta-pair">
+                <span class="meta-label">Cơ quan thụ lý / Thẩm quyền:</span>
+                <span id="modalAuthority" class="meta-val highlight-authority"></span>
+              </div>
+              <div class="meta-pair">
+                <span class="meta-label">Tình trạng tố tụng:</span>
+                <span id="modalProceduralStatus" class="meta-val"></span>
+              </div>
+              <div class="meta-pair full-width">
+                <span class="meta-label">Chủ thể chính / Bị can cụ thể:</span>
+                <span id="modalActors" class="meta-val"></span>
+              </div>
+              <div class="meta-pair full-width">
+                <span class="meta-label">Thực thể liên quan:</span>
+                <span id="modalRelatedEntities" class="meta-val"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION D: NGUỒN & CHỨNG CỨ -->
+        <div class="detail-section">
+          <div class="section-title-wrap">
+            <span class="section-number">D</span>
+            <h3 class="section-title">NGUỒN & CHỨNG CỨ</h3>
+          </div>
+          <div class="source-card">
+            <div class="source-header-row">
+              <div>
+                <span class="source-publisher-badge" id="modalPublisher">Báo chí</span>
+                <span class="source-time" id="modalSourcePublished"></span>
+              </div>
+              <a id="btnReadOriginalArticle" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary btn-read-original">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/>
+                  <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                Đọc bài gốc
+              </a>
+            </div>
+
+            <div class="source-url-row">
+              <span class="meta-label">URL nguồn gốc:</span>
+              <a id="modalSourceUrl" href="#" target="_blank" rel="noopener noreferrer" class="url-link"></a>
+            </div>
+
+            <!-- EVIDENCE QUOTE -->
+            <div class="evidence-quote-box">
+              <span class="quote-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                  <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                </svg>
+                Trích dẫn chứng cứ cốt lõi từ bài báo:
+              </span>
+              <blockquote id="modalEvidenceQuote" class="evidence-quote-content"></blockquote>
+            </div>
+
+            <!-- PROVENANCE METADATA -->
+            <div class="provenance-info-row">
+              <div class="provenance-item">
+                <span class="prov-label">File HTML lưu trữ (Evidence Vault):</span>
+                <code id="modalRawFilename" class="prov-code"></code>
+              </div>
+              <div class="provenance-item">
+                <span class="prov-label">SHA-256 đối soát toàn vẹn:</span>
+                <code id="modalRawSha" class="prov-code prov-sha"></code>
+              </div>
+            </div>
+
+            <!-- MULTIPLE SOURCES IF PRESENT -->
+            <div id="modalMultiSourcesWrap" class="multi-sources-wrap" style="display: none;">
+              <h4 class="multi-sources-title">Các nguồn báo chí khác cùng phản ánh:</h4>
+              <ul id="modalMultiSourcesList" class="multi-sources-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMPORTANT NOTE BOUNDARY (SECTION 9) -->
+        <div class="boundary-note-card">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p>
+            <strong>Lưu ý phạm vi hệ thống:</strong> Antares hỗ trợ tìm kiếm và tra cứu các vụ việc thực tiễn từ nguồn đã thu thập. Việc lựa chọn, phân tích và sử dụng vụ việc trong giảng dạy do giảng viên quyết định.
+          </p>
+        </div>
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div class="modal-footer">
+        <button id="btnFeedbackTrigger" class="btn-outline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Góp ý dữ liệu vụ việc này
+        </button>
+        <button id="btnModalCloseBottom" class="btn-secondary">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINIMAL FEEDBACK MODAL (SECTION 12) -->
+  <div id="feedbackModal" class="modal-overlay" style="display: none; z-index: 1100;">
+    <div class="feedback-modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Góp ý dữ liệu vụ việc</h3>
+        <button id="btnFeedbackClose" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="feedback-intro">
+          Ghi nhận phản hồi để phục vụ đợt khảo sát thử nghiệm. Góp ý được lưu trữ cục bộ trên trình duyệt của bạn (Local Storage) và không tự động thay đổi bộ dữ liệu chuẩn Master.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Mã vụ việc:</label>
+          <input type="text" id="feedbackCaseId" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loại góp ý:</label>
+          <select id="feedbackCategory" class="form-select">
+            <option value="thong_tin_chua_chinh_xac">Thông tin chưa chính xác</option>
+            <option value="link_nguon_loi">Đường link nguồn báo lỗi/thay đổi</option>
+            <option value="dia_ban_chua_chuan">Địa danh hành chính cần làm rõ</option>
+            <option value="khac">Ý kiến đóng góp khác</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nội dung ghi chú của giảng viên:</label>
+          <textarea id="feedbackNotes" class="form-textarea" rows="4" placeholder="Nhập nhận xét hoặc thông tin cần lưu ý về vụ việc..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnSaveFeedback" class="btn-primary">Lưu ghi chú</button>
+        <button id="btnCancelFeedback" class="btn-secondary">Hủy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK HISTORY DRAWER -->
+  <div id="historyDrawer" class="modal-overlay" style="display: none; z-index: 1050;">
+    <div class="drawer-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Sổ tay ghi chú góp ý của giảng viên</h3>
+        <button id="btnDrawerClose" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="feedbackList" class="feedback-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <p class="footer-brand">ANTARES LEGAL AI — Công cụ tra cứu & phát hiện vụ việc thực tế phục vụ giảng dạy (Phiên bản thử nghiệm / Public Pilot)</p>
+      <p class="footer-note">Dữ liệu nguồn được thu thập và chuẩn hóa theo Nghị quyết 202/2025/QH15 & 175/2024/QH15. Đây là phiên bản thử nghiệm giới hạn phục vụ khảo sát người dùng, không thay thế cơ sở dữ liệu pháp luật chính thức.</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DATA & APP -->
+  <script src="data/phase6b_cases.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
